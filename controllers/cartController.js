@@ -1,14 +1,14 @@
 const Product = require('../model/productModel')
 const Cart = require('../model/cartModel')
 
-// function totalprice(cart) {
-//     let totalprice = 0;
-//     cart.cartItem.forEach(item => {
-//         totalprice += item.quantity * item.price
-//     });
-//     cart.totalprice = totalprice
+const totalprice = (cart) => {
+    let totalprice = 0;
+    cart.cartItem.forEach(item => {
+        totalprice += item.quantity * item.price
+    });
+    return cart.totalprice = totalprice
 
-// }
+}
 
 
 const getcart = async(req , res) =>{
@@ -43,7 +43,8 @@ const addToCart = async(req , res) => {
                 cartItem :[]
             })
         }
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).select('price')
+    req.body.price = product.price
     if(!product)
         {
             return res.status(404).json({status : "faild" , msg : "product not found"})
@@ -54,11 +55,13 @@ const addToCart = async(req , res) => {
     if(itemexist)
         {
             itemexist.quantity +=quantity
+            itemexist.price = req.body.price
+            cart.totalPrice = totalprice(cart)
         }
     else{
     cart.cartItem.push({...req.body})
     }
-
+    cart.totalPrice = totalprice(cart)
     await cart.save();
     res.status(200).json(cart)
     }
@@ -85,8 +88,9 @@ const removeitem = async (req , res)=>{
             }
         else{
             cart.cartItem = cart.cartItem.filter(item =>{
-                item.productId !== productId
+               return !item.productId.equals(productId)
             })
+            cart.totalPrice = totalprice(cart)
             await cart.save()
             return res.status(200).json({
                 status : "success",
@@ -125,6 +129,7 @@ const updeteQuantity = async (req,res) =>{
         if(item)
             {
                 item.quantity = quantity
+                cart.totalPrice = totalprice(cart)
                 await cart.save()
                 return res.status(200).json({
                     status: "success",
