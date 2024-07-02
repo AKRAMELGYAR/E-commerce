@@ -1,6 +1,15 @@
 const Product = require('../model/productModel')
 const Cart = require('../model/cartModel')
 
+// function totalprice(cart) {
+//     let totalprice = 0;
+//     cart.cartItem.forEach(item => {
+//         totalprice += item.quantity * item.price
+//     });
+//     cart.totalprice = totalprice
+
+// }
+
 
 const getcart = async(req , res) =>{
     try{
@@ -16,7 +25,7 @@ const getcart = async(req , res) =>{
     {
         return res.status(404).json({
             status : "faild",
-            msg:err
+            msg : err
         })
     }
 }
