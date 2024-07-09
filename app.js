@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+const AppError = require('./utils/AppError')
+const GlobalError = require('./controllers/errorController')
+
 app.use(express.json());
 
 const dotenv = require('dotenv')
@@ -20,6 +23,11 @@ app.use('/api/users' , userRoutes)
 //////CART
 const cartRoutes = require('./routes/CartRouter')
 app.use('/api/cart' , cartRoutes )
+
+app.all('*' , (req,res,next)=>{
+    next(new AppError(`can not find ${req.originalUrl} on this server!` ,404))
+})
+app.use(GlobalError)
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.URI)

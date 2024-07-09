@@ -1,9 +1,10 @@
 const Product = require('../model/productModel')
 const ApiFeatures = require('../utils/ApiFeatures')
+const AppError = require('../utils/AppError')
+const catchAsync = require('../utils/catchAsync')
 
 
-const getAllProducts = async(req,res) => {
-    try{
+const getAllProducts = catchAsync(async(req,res,next) => {
         const Features = new ApiFeatures(Product.find() , req.query)
         .Filter()
         .sort()
@@ -15,88 +16,69 @@ const getAllProducts = async(req,res) => {
             result : products.length,
             data : products
         });
-        }
-    catch(err)
-    {
-        return res.status(404).json({
-            status : "faild",
-            msg:err
-        })
-    }
-}
+        
+})
 
- const getSingleProduct = async (req,res) => {
-    try{
+ const getSingleProduct = catchAsync(async (req,res,next) => {
         const product = await Product.findById(req.params.id)
         if(!product)
             {
-                return res.status(404).json({
-                    status : "faild",
-                    msg : "product not found"})
+                return next(new AppError('there is no product found with this ID' , 404))
             }
         res.json({
             status : "success",
             data : product
         })
-    }
-    catch(err){
-        return res.status(404).json({
-            status : "faild",
-            msg:err
-        })
-    }
- }
+ })
 
- const addProduct = async (req,res) =>{
-    try{
-        const newproduct = new Product({...req.body});
+ const addProduct = catchAsync(async (req,res,next) =>{
+        const newproduct = new Product({...req.body} , {runValidators : true});
         await newproduct.save();
         res.status(201).json({
             status : "success",
             data : newproduct})
-    }
-    catch(err){
-        return res.status(404).json({
-            status : "faild",
-            msg:err
-        })
-    }
+ })
 
- }
-
- const updateProduct = async (req,res) =>{
-    try{
-        const product = await Product.updateOne({ _id : req.params.id} , {$set : {...req.body}});
+ const updateProduct = catchAsync(async (req,res,next) =>{
+        const product = await Product.updateOne({ _id : req.params.id} , {$set : {...req.body}} ,{
+            new : true,
+            runValidators : true
+        });
         return res.status(200).json({
             status : "success",
             data : product})
-    }
-    catch(err)
-    {
-        return res.status(404).json({
-            status : "faild",
-            msg:err
-        })
-    }
- }
+ })
 
- const DeleteProduct = async(req,res) =>{
-    try{
+ const DeleteProduct = catchAsync(async(req,res,next) =>{
     const data = await Product.deleteOne({_id : req.params.id})
     res.json({success : true , msg : data})
-    }
-    catch(err)
-    {
-        return res.status(404).json({
-            status : "faild",
-            msg:err
-        })
-    }
- }
+ })
+
+ const statistics = catchAsync(async(req,res,next)=>{
+    const statistics = await Product.aggregate([
+        {
+            $match : {price : {$lte : 40000}}
+        },
+        {
+            $group : {
+                _id : null,
+                num : {$sum : 1},
+                minprice : {$min : '$price'},
+                maxprice : {$max : '$price'}
+            }
+        }
+    ])
+
+    return res.json({
+        status : 'success',
+        data : statistics
+    })
+ })
  module.exports = {
     getAllProducts,
     getSingleProduct,
     addProduct,
     updateProduct,
-    DeleteProduct
+    DeleteProduct,
+    statistics
  }

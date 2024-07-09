@@ -1,5 +1,7 @@
 const Product = require('../model/productModel')
-const Cart = require('../model/cartModel')
+const Cart = require('../model/cartModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/AppError');
 
 const totalprice = (cart) => {
     let totalprice = 0;
@@ -11,27 +13,18 @@ const totalprice = (cart) => {
 }
 
 
-const getcart = async(req , res) =>{
-    try{
+const getcart = catchAsync(async(req , res,next) =>{
     const userId = req.params.userId
     const cart = await Cart.findOne({userId}).populate('cartItem.productId')
     if(cart)
         {
             return res.status(200).json({status : "success" , data : cart})
         }
-    return res.status(404).json({status : "faild" , msg : "cart not found"})
-    }
-    catch(err)
-    {
-        return res.status(404).json({
-            status : "faild",
-            msg : err
-        })
-    }
-}
+    return next(new AppError ('no cart found for this user!' , 404)) 
+})
 
-const addToCart = async(req , res) => {
-    try{
+const addToCart = catchAsync(async(req , res,next) => {
+
     const {productId , quantity} = req.body
     const userId = req.params.userId
 
@@ -47,7 +40,7 @@ const addToCart = async(req , res) => {
     req.body.price = product.price
     if(!product)
         {
-            return res.status(404).json({status : "faild" , msg : "product not found"})
+            return next(new AppError('product not found',404))
         }
     const itemexist =  cart.cartItem.find((item) =>{
         return item.productId == productId;
@@ -64,27 +57,15 @@ const addToCart = async(req , res) => {
     cart.totalPrice = totalprice(cart)
     await cart.save();
     res.status(200).json(cart)
-    }
-    catch(err)
-    {
-        return res.status(404).json({
-            status : "faild",
-            msg:err
-        })
-    }
-}
+})
 
-const removeitem = async (req , res)=>{
-    try{
+const removeitem = catchAsync(async (req , res,next)=>{
         const userId = req.params.userId
         const productId = req.params.productId
         const cart = await Cart.findOne({userId})
         if(!cart)
             {
-                return res.status(404).json({
-                    status : "faild",
-                    msg : "there is no cart exist for this user"
-                })
+                return next(new AppError ('no cart found for this user!' , 404))
             }
         else{
             cart.cartItem = cart.cartItem.filter(item =>{
@@ -97,19 +78,9 @@ const removeitem = async (req , res)=>{
                 msg : "done"
             })
         }
-    }
-    catch(err)
-    {
-        res.status(404).json({
-            status : "faild",
-            msg : err
-        })
-    }
+})
 
-}
-
-const updeteQuantity = async (req,res) =>{
-    try{
+const updeteQuantity = catchAsync(async (req,res,next) =>{
         const userId = req.params.userId
         const productId = req.params.productId
         const {quantity} = req.body
@@ -117,10 +88,7 @@ const updeteQuantity = async (req,res) =>{
         const cart = await Cart.findOne({userId})
         if(!cart)
             {
-                return res.status(404).json({
-                    status : "faild",
-                    msg : "there is no cart exist for this user"
-                })
+                return next(new AppError ('no cart found for this user!' , 404))
             }
         
         const item = cart.cartItem.find((item) =>{
@@ -137,17 +105,7 @@ const updeteQuantity = async (req,res) =>{
                     cart
                 })
             }
-        }
-        catch(err)
-        {
-            console.log(err)
-            res.status(404).json({
-                status : "faild00",
-                msg : err
-            })
-        }
-
-}
+})
 
 module.exports = {
     getcart,
