@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
+const generateToken = require('../utils/GenerateToken')
 
 const Register = async(req , res , next)=>{
     const {firstName , email ,lastName , password} = req.body
@@ -22,7 +23,7 @@ const Register = async(req , res , next)=>{
         password : hash_pass
     })
 
-    const token = jwt.sign({email : newuser.email , id : newuser._id } , process.env.JWTSECRETKEY)
+    const token = generateToken({email : newuser.email , id : newuser._id})
     newuser.token = token
 
     await newuser.save();
@@ -42,7 +43,7 @@ const login = async( req, res,next)=>{
     const pass = bcrypt.compare(toString(password) , user.password)
     if(pass)
         {
-            const token = jwt.sign({email : user.email , id : user._id } , process.env.JWTSECRETKEY)
+            const token = generateToken({email : user.email , id : user._id})
             user.token = token
 
             await user.save();
@@ -54,7 +55,7 @@ const login = async( req, res,next)=>{
 const getUsers = catchAsync(async (req,res,next)=>{
 
     const users = await User.find()
-    return res.status(200).json({success : true , data : users})   
+    return res.status(200).json({success : true , data : users})      
 })
 
 
