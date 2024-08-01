@@ -48,7 +48,7 @@ function requestToKey(req) {
     return `${req.path}@${hash.sha1(reqDataToHash)}`;
 }
 
-function redisCacheMiddleware(ttl) {
+function redisCacheMiddleware(ttl = process.env.ttl) {
     return async (req, res, next) => {
         if (isRedisWorking()) {
             const key = requestToKey(req);

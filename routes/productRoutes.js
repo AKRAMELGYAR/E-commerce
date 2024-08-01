@@ -4,7 +4,7 @@ const router = express.Router()
 const {redisCacheMiddleware} = require('../middleware/redis')
 
 router.route('/')
-            .get(redisCacheMiddleware(900),productController.getAllProducts)
+            .get(redisCacheMiddleware(),productController.getAllProducts)
             .post(productController.addProduct)
 
 router.route('/statistics')
