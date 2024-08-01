@@ -1,16 +1,25 @@
 const express = require('express');
-const app = express();
 
 const AppError = require('./utils/AppError')
 const GlobalError = require('./controllers/errorController')
 
-app.use(express.json());
 
 const dotenv = require('dotenv')
 dotenv.config({path : './config.env'})
 
 const morgan = require('morgan')
+
+const { initializeRedisClient } = require("./middleware/redis");
+const mongoose = require('mongoose');
+
+async function startserver (){
+
+const app = express();
+app.use(express.json());
+app.use(GlobalError)
 app.use(morgan('dev'))
+
+await initializeRedisClient()
 
 /////PRODUCT
 const productRoutes = require('./routes/productRoutes')
@@ -27,9 +36,7 @@ app.use('/api/cart' , cartRoutes )
 app.all('*' , (req,res,next)=>{
     next(new AppError(`can not find ${req.originalUrl} on this server!` ,404))
 })
-app.use(GlobalError)
 
-const mongoose = require('mongoose');
 mongoose.connect(process.env.URI)
 .then(
     app.listen(process.env.PORT, ()=>{
@@ -37,3 +44,6 @@ mongoose.connect(process.env.URI)
     })
 )
 .catch(err=>{console.log(err)})
+}
+
+startserver().then('done all').catch(err=>{console.log(err)})

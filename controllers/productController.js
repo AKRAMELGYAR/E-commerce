@@ -10,7 +10,8 @@ const getAllProducts = catchAsync(async(req,res,next) => {
         .sort()
         .limit()
         .pagination()
-        const products = await Features.query 
+        const products = await Features.query
+        console.log('without cache')
         res.json({
             status : "success",
             result : products.length,
@@ -32,8 +33,8 @@ const getAllProducts = catchAsync(async(req,res,next) => {
  })
 
  const addProduct = catchAsync(async (req,res,next) =>{
-        const newproduct = new Product({...req.body} , {runValidators : true});
-        await newproduct.save();
+        const newproduct = new Product({...req.body});
+        await newproduct.save({runValidators : true});
         res.status(201).json({
             status : "success",
             data : newproduct})

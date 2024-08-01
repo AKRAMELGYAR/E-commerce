@@ -6,7 +6,7 @@ const verifyToken = (req,res,next)=>{
 
     if (!Auth)
     {
-        next(new AppError("teken is required!" , 401))
+        next(new AppError("token is required!" , 401))
     }
     const token = Auth.split(' ')[1]
 
