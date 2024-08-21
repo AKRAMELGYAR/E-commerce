@@ -33,6 +33,10 @@ app.use('/api/users' , userRoutes)
 const cartRoutes = require('./routes/CartRouter')
 app.use('/api/cart' , cartRoutes )
 
+//////ORDER
+const orderRoutes = require('./routes/orderRouter')
+app.use('/api/order' , orderRoutes)
+
 app.all('*' , (req,res,next)=>{
     next(new AppError(`can not find ${req.originalUrl} on this server!` ,404))
 })
@@ -46,4 +50,4 @@ mongoose.connect(process.env.URI)
 .catch(err=>{console.log(err)})
 }
 
-startserver().then('done all').catch(err=>{console.log(err)})
+startserver().then('done all').catch(err=>console.log(err))
