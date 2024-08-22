@@ -6,7 +6,7 @@ const orderControllers = require('../controllers/orderControllers')
 
 
 router.route('/')
-            .get(verifyToken,orderControllers.creatOrder)
+            .post(verifyToken,orderControllers.creatOrder)
 
 
 module.exports = router
