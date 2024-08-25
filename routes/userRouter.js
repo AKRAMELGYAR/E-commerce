@@ -1,16 +1,17 @@
 const express = require('express')
 const router = express.Router();
-const userController = require('../controllers/authControllers')
+const userController = require('../controllers/userController')
 const verifyToken = require('../middleware/verifyToken')
+const {verifyRole} = require('../controllers/authControllers')
 
 router.route('/')
-            .get(verifyToken,userController.getUsers)
+            .get(verifyToken,verifyRole("admin"),userController.getUsers)
 
-router.route('/Register')
-            .post(userController.Register)
+router.route('/update')
+            .patch(verifyToken , userController.updateUser)
 
+router.route('/delete')
+            .delete(verifyToken , userController.deleteUser)
 
-router.route('/login')
-            .post(userController.login)
 
 module.exports = router

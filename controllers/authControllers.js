@@ -1,5 +1,4 @@
 const User = require('../model/userModel')
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
@@ -43,24 +42,47 @@ const login = async( req, res,next)=>{
     const pass = bcrypt.compare(toString(password) , user.password)
     if(pass)
         {
-            const token = generateToken({email : user.email , id : user._id})
-            user.token = token
+            const token = generateToken({email : user.email , id : user._id},res)
 
+            res.cookie('JWT',token,
+                {
+                    maxAge : 86400,
+                    // secure : ture /// production only
+                    httpOnly : true
+                })
+
+            user.token = token
             await user.save();
             return res.status(200).json({success : true , msg : "login succssefully",token : user.token})
         }
     return next(new AppError("password or Email are incorrect!" , 500))
 }
 
-const getUsers = catchAsync(async (req,res,next)=>{
 
-    const users = await User.find()
-    return res.status(200).json({success : true , data : users})      
+const verifyRole = function(...roles)
+{
+    return (req,res,next)=>{
+        if(!roles.includes(req.user.role))
+        {
+            return next(new AppError("u do not have permition to perform this action!",403))
+        }
+        next();
+        }
+}
+
+const forgetpassword = catchAsync(async(req,res,next)=>{
+    const user = await User.findOne({email : req.body.email})
+    if(!user){
+        return next(new AppError("user are not exist!" , 404))
+    }
+
+    user.generateResetPassToken()
 })
 
 
 module.exports = {
     login,
     Register,
-    getUsers
+    verifyRole,
+    forgetpassword
 }
