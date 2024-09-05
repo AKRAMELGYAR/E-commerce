@@ -10,9 +10,8 @@ const morgan = require('morgan')
 const { initializeRedisClient } = require("./middleware/redis");
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-
-
 dotenv.config({path : './config.env'})
+const path = require('path')
 
 
 const rate = ratelimit({
@@ -35,13 +34,14 @@ app.use('/api' , rate) ////limiting requests form same IP
 app.use(cookieParser())
 app.use(GlobalError)
 app.use(morgan('dev'))
+app.use(express.static(path.join(__dirname , 'uploads')))
 
 
 await initializeRedisClient()
 
 /////PRODUCT ROUTER
 const productRoutes = require('./routes/productRoutes')
-app.use('/api/products' , productRoutes )
+app.use('/api/products', productRoutes )
 
 //////AUTH ROUTER
 const authRoutes = require('./routes/authRouter')

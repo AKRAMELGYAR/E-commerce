@@ -19,11 +19,13 @@ const Register = async(req , res , next)=>{
         firstName,
         lastName,
         email,
-        password : hash_pass
+        password : hash_pass,
+        avatar : req.file.filename
     })
 
     const token = generateToken({email : newuser.email , id : newuser._id})
     newuser.token = token
+    console.log(req.file)
 
     await newuser.save();
     return res.status(201).json({
@@ -84,5 +86,5 @@ module.exports = {
     login,
     Register,
     verifyRole,
-    forgetpassword
+    forgetpassword,
 }

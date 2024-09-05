@@ -33,7 +33,19 @@ const getAllProducts = catchAsync(async(req,res,next) => {
  })
 
  const addProduct = catchAsync(async (req,res,next) =>{
-        const newproduct = new Product({...req.body});
+        const {name ,price , description , stock_quantity } = req.body
+        const filenames =[]
+        req.files.forEach(el => {
+            filenames.push(el.filename
+            )
+        });
+        const newproduct = new Product({
+            name,
+            price,
+            description,
+            stock_quantity,
+            img : filenames
+        });        
         await newproduct.save({runValidators : true});
         res.status(201).json({
             status : "success",
