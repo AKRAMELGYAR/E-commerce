@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const cartController = require('../controllers/cartController')
-
-router.route('/:userId')
-            .get(cartController.getcart)
-            .post(cartController.addToCart)
-router.route('/:userId/:productId')
+const verifyToken = require('../middleware/verifyToken')
+router.route('/')
+            .get(verifyToken , cartController.getcart)
+            .post(verifyToken , cartController.addToCart)
+router.route('/:productId')
             .patch(cartController.updeteQuantity)
             .delete(cartController.removeitem)
 

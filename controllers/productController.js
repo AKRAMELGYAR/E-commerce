@@ -2,6 +2,8 @@ const Product = require('../model/productModel')
 const ApiFeatures = require('../utils/ApiFeatures')
 const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
+const {requestToKey , writeData} = require('../middleware/redis')
+const {productSchema} = require('../utils/joi')
 
 
 const getAllProducts = catchAsync(async(req,res,next) => {
@@ -33,6 +35,11 @@ const getAllProducts = catchAsync(async(req,res,next) => {
  })
 
  const addProduct = catchAsync(async (req,res,next) =>{
+        const {error ,value} = productSchema.validate(req.body)
+        if(error)
+        {
+            return next(new AppError(`${error.details[0].message}` , 400))
+        }
         const {name ,price , description , stock_quantity } = req.body
         const filenames =[]
         req.files.forEach(el => {
@@ -45,7 +52,10 @@ const getAllProducts = catchAsync(async(req,res,next) => {
             description,
             stock_quantity,
             img : filenames
-        });        
+        });
+        // const key = requestToKey(req)
+        // const products = await Product.find()
+        // await writeData(key,300,products)        
         await newproduct.save({runValidators : true});
         res.status(201).json({
             status : "success",
@@ -53,6 +63,11 @@ const getAllProducts = catchAsync(async(req,res,next) => {
  })
 
  const updateProduct = catchAsync(async (req,res,next) =>{
+    const {error ,value} = productSchema.validate(req.body)
+        if(error)
+        {
+            return next(new AppError(`${error.details[0].message}` , 400))
+        }
         const product = await Product.updateOne({ _id : req.params.id} , {$set : {...req.body}} ,{
             new : true,
             runValidators : true

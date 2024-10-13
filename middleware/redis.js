@@ -79,5 +79,6 @@ function redisCacheMiddleware(ttl = process.env.ttl) {
 module.exports = {
       initializeRedisClient,
       redisCacheMiddleware,
-      writeData      
+      writeData,
+      requestToKey 
     };

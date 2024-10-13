@@ -14,7 +14,8 @@ const totalprice = (cart) => {
 
 
 const getcart = catchAsync(async(req , res,next) =>{
-    const userId = req.params.userId
+    const userId = req.user._id
+    console.log(userId)
     const cart = await Cart.findOne({userId}).populate('cartItem.productId')
     if(cart)
         {
@@ -26,7 +27,7 @@ const getcart = catchAsync(async(req , res,next) =>{
 const addToCart = catchAsync(async(req , res,next) => {
 
     const {productId , quantity} = req.body
-    const userId = req.params.userId
+    const userId = req.user._id
 
     let cart = await Cart.findOne({userId})
     if(!cart)
@@ -60,7 +61,7 @@ const addToCart = catchAsync(async(req , res,next) => {
 })
 
 const removeitem = catchAsync(async (req , res,next)=>{
-        const userId = req.params.userId
+        const userId = req.user._id
         const productId = req.params.productId
         const cart = await Cart.findOne({userId})
         if(!cart)
@@ -81,7 +82,7 @@ const removeitem = catchAsync(async (req , res,next)=>{
 })
 
 const updeteQuantity = catchAsync(async (req,res,next) =>{
-        const userId = req.params.userId
+        const userId = req.user._id
         const productId = req.params.productId
         const {quantity} = req.body
 

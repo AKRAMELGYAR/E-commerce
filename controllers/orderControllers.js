@@ -7,7 +7,7 @@ const Product = require('../model/productModel')
 
 const creatOrder = catchAsync(async(req,res,next)=>{
     const {shippingAddress , paymentMethod} = req.body
-    const userId = req.user.id
+    const userId = req.user._id
     const cart = await Cart.findOne({userId}).populate("cartItem.productId")
     if(!cart)
     {

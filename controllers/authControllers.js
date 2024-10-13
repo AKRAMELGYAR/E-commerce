@@ -4,10 +4,15 @@ const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
 const generateToken = require('../utils/GenerateToken')
 const sendMail = require('../utils/mailer')
+const {userSchema} = require('../utils/joi')
 
 const Register = async(req , res , next)=>{
+    const {error , value} = userSchema.validate(req.body)
+    if(error)
+    {
+        return next(new AppError(`${error.details[0].message}` , 400))
+    }
     const {firstName , email ,lastName , password} = req.body
-
     const olduser = await User.findOne({email})
     if(olduser)
         {
@@ -15,7 +20,6 @@ const Register = async(req , res , next)=>{
         }
 
     const hash_pass = await bcrypt.hash(toString(password) , 12)
-
     const newuser = new User({
         firstName,
         lastName,
@@ -26,8 +30,6 @@ const Register = async(req , res , next)=>{
 
     const token = generateToken({email : newuser.email , id : newuser._id})
     newuser.token = token
-    console.log(req.file)
-
     await newuser.save();
 
     await sendMail({
