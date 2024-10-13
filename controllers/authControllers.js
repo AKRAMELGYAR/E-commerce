@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
 const generateToken = require('../utils/GenerateToken')
+const sendMail = require('../utils/mailer')
 
 const Register = async(req , res , next)=>{
     const {firstName , email ,lastName , password} = req.body
@@ -28,6 +29,12 @@ const Register = async(req , res , next)=>{
     console.log(req.file)
 
     await newuser.save();
+
+    await sendMail({
+        mail : newuser.email,
+        subject : 'Welcome',
+        message : 'welcome from our website!'
+    })
     return res.status(201).json({
         msg : "done",
         token : newuser.token
