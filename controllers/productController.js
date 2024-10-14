@@ -35,11 +35,7 @@ const getAllProducts = catchAsync(async(req,res,next) => {
  })
 
  const addProduct = catchAsync(async (req,res,next) =>{
-        const {error ,value} = productSchema.validate(req.body)
-        if(error)
-        {
-            return next(new AppError(`${error.details[0].message}` , 400))
-        }
+        
         const {name ,price , description , stock_quantity } = req.body
         const filenames =[]
         req.files.forEach(el => {
@@ -63,11 +59,6 @@ const getAllProducts = catchAsync(async(req,res,next) => {
  })
 
  const updateProduct = catchAsync(async (req,res,next) =>{
-    const {error ,value} = productSchema.validate(req.body)
-        if(error)
-        {
-            return next(new AppError(`${error.details[0].message}` , 400))
-        }
         const product = await Product.updateOne({ _id : req.params.id} , {$set : {...req.body}} ,{
             new : true,
             runValidators : true

@@ -6,12 +6,12 @@ const generateToken = require('../utils/GenerateToken')
 const sendMail = require('../utils/mailer')
 const {userSchema} = require('../utils/joi')
 
-const Register = async(req , res , next)=>{
-    const {error , value} = userSchema.validate(req.body)
-    if(error)
-    {
-        return next(new AppError(`${error.details[0].message}` , 400))
-    }
+const Register = catchAsync(async(req , res , next)=>{
+    // const {error , value} = userSchema.validate(req.body)
+    // if(error)
+    // {
+    //     return next(new AppError(`${error.details[0].message}` , 400))
+    // }
     const {firstName , email ,lastName , password} = req.body
     const olduser = await User.findOne({email})
     if(olduser)
@@ -41,9 +41,9 @@ const Register = async(req , res , next)=>{
         msg : "done",
         token : newuser.token
     })
-}
+})
 
-const login = async( req, res,next)=>{
+const login = catchAsync(async( req, res,next)=>{
     const {email , password} = req.body
     const user = await User.findOne({email})
     if(!user)
@@ -67,7 +67,7 @@ const login = async( req, res,next)=>{
             return res.status(200).json({success : true , msg : "login succssefully",token : user.token})
         }
     return next(new AppError("password or Email are incorrect!" , 500))
-}
+})
 
 
 const verifyRole = function(...roles)
