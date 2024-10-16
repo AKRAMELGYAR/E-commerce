@@ -1,9 +1,7 @@
 const Product = require('../model/productModel')
-const ApiFeatures = require('../utils/ApiFeatures')
-const AppError = require('../utils/AppError')
-const catchAsync = require('../utils/catchAsync')
-const {requestToKey , writeData} = require('../middleware/redis')
-const {productSchema} = require('../utils/joi')
+const ApiFeatures = require('../../utils/ApiFeatures')
+const AppError = require('../../utils/AppError')
+const catchAsync = require('../../utils/catchAsync')
 
 
 const getAllProducts = catchAsync(async(req,res,next) => {

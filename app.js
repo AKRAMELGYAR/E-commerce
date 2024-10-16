@@ -2,7 +2,7 @@ const express = require('express');
 const helmet = require('helmet')
 const dotenv = require('dotenv')
 const AppError = require('./utils/AppError')
-const GlobalError = require('./controllers/errorController')
+const GlobalError = require('./utils/ErrorHandler')
 const ratelimit = require('express-rate-limit')
 const dataSanitizer = require('express-mongo-sanitize')
 const xss = require('xss-clean')
@@ -40,23 +40,23 @@ app.use(express.static(path.join(__dirname , 'uploads')))
 await initializeRedisClient()
 
 /////PRODUCT ROUTER
-const productRoutes = require('./routes/productRoutes')
+const productRoutes = require('./product/route/productRoutes')
 app.use('/api/products', productRoutes )
 
 //////AUTH ROUTER
-const authRoutes = require('./routes/authRouter')
+const authRoutes = require('./Auth/route/authRouter')
 app.use('/api/auth' , authRoutes)
 
 //////USERS ROUTER
-const userRoutes = require('./routes/userRouter')
+const userRoutes = require('./User/route/userRouter')
 app.use('/api/users' , userRoutes)
 
 //////CART ROUTER
-const cartRoutes = require('./routes/CartRouter')
+const cartRoutes = require('./Cart/route/CartRouter')
 app.use('/api/cart' , cartRoutes )
 
 //////ORDER ROUTER
-const orderRoutes = require('./routes/orderRouter')
+const orderRoutes = require('./order/route/orderRouter')
 app.use('/api/order' , orderRoutes)
 
 ////// GLOBAL ERROR HENDLER

@@ -1,10 +1,9 @@
-const User = require('../model/userModel')
+const User = require('../../User/model/userModel')
 const bcrypt = require('bcrypt')
-const AppError = require('../utils/AppError')
-const catchAsync = require('../utils/catchAsync')
-const generateToken = require('../utils/GenerateToken')
-const sendMail = require('../utils/mailer')
-const {userSchema} = require('../utils/joi')
+const AppError = require('../../utils/AppError')
+const catchAsync = require('../../utils/catchAsync')
+const generateToken = require('../../utils/GenerateToken')
+const sendMail = require('../../utils/mailer')
 
 const Register = catchAsync(async(req , res , next)=>{
     // const {error , value} = userSchema.validate(req.body)

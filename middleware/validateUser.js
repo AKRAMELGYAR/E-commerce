@@ -1,5 +1,12 @@
+const joi = require('joi')
 const AppError = require('../utils/AppError')
-const {userSchema} = require('../utils/joi')
+
+const userSchema = joi.object({
+    firstName : joi.string().required(),
+    lastName : joi.string().required(),
+    email : joi.string().email().required(),
+    password : joi.string().alphanum().min(3).max(30).pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required()
+})
 
 const validateUser = ( req , res, next)=>{
     const {error , value} = userSchema.validate(req.body)

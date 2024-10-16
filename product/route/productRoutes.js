@@ -1,11 +1,11 @@
 const express = require('express');
-const productController = require('../controllers/productController')
+const productController = require('../controller/productController')
 const router = express.Router()
-const {redisCacheMiddleware} = require('../middleware/redis');
-const verifyToken = require('../middleware/verifyToken');
-const { verifyRole } = require('../controllers/authControllers');
-const uploads = require('../middleware/multer')
-const validateProduct = require('../middleware/validateProduct')
+const {redisCacheMiddleware} = require('../../middleware/redis');
+const verifyToken = require('../../middleware/verifyToken');
+const { verifyRole } = require('../../Auth/controller/authControllers');
+const uploads = require('../../middleware/multer')
+const validateProduct = require('../../middleware/validateProduct')
 router.route('/')
             .get(redisCacheMiddleware(),productController.getAllProducts)
             .post(verifyToken,verifyRole("seller","admin"),uploads.array('img',7),validateProduct,productController.addProduct)

@@ -1,8 +1,8 @@
-const Cart = require('../model/cartModel')
-const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/AppError')
+const Cart = require('../../Cart/model/cartModel')
+const catchAsync = require('../../utils/catchAsync')
+const AppError = require('../../utils/AppError')
 const Order = require('../model/ordermodel')
-const Product = require('../model/productModel')
+const Product = require('../../product/model/productModel')
 
 
 const creatOrder = catchAsync(async(req,res,next)=>{

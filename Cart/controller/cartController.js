@@ -1,7 +1,7 @@
-const Product = require('../model/productModel')
+const Product = require('../../product/model/productModel')
 const Cart = require('../model/cartModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/AppError');
+const catchAsync = require('../../utils/catchAsync');
+const AppError = require('../../utils/AppError');
 
 const totalprice = (cart) => {
     let totalprice = 0;
