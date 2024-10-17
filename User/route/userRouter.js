@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const userController = require('../../User/controller/userController')
 const verifyToken = require('../../middleware/verifyToken')
-const {verifyRole} = require('../../Auth/controller/authControllers')
+const verifyRole = require('../../middleware/verifyRole')
 
 router.route('/')
             .get(verifyToken,verifyRole("admin"),userController.getUsers)

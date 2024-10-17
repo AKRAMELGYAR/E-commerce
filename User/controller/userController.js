@@ -1,5 +1,6 @@
-const User = require('../model/userModel')
 const catchAsync = require('../../utils/catchAsync')
+const userService = require('../service/userService')
+
 
 const filterbody = (obj , ...allowedFields)=>{
     const newobj = {}
@@ -14,18 +15,13 @@ const filterbody = (obj , ...allowedFields)=>{
 
 const getUsers = catchAsync(async (req,res,next)=>{
 
-    const users = await User.find()
+    const users = await userService.getUsers()
     return res.status(200).json({success : true , data : users})      
 })
 
 
 const updateUser = catchAsync(async(req,res,next)=>{
-    const fields = filterbody(req.body , 'firstName' , 'lastName', 'email')
-    const updatedUser = await User.findByIdAndUpdate(req.user.id ,fields , 
-        {
-            new : true,
-            runValidators : true
-        })
+    const updatedUser = await userService.updateUser(req.body,req.user._id)
     return res.json({
         success : true,
         data : updatedUser
@@ -33,7 +29,7 @@ const updateUser = catchAsync(async(req,res,next)=>{
 })
 
 const deleteUser = catchAsync(async(req,res,next)=>{
-    await User.findByIdAndUpdate(req.user.id , {active : false})
+    await userService.deleteUser(req.user.id)
     return res.json({
         success : true,
         data : null

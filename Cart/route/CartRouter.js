@@ -6,8 +6,8 @@ router.route('/')
             .get(verifyToken , cartController.getcart)
             .post(verifyToken , cartController.addToCart)
 router.route('/:productId')
-            .patch(cartController.updeteQuantity)
-            .delete(cartController.removeitem)
+            .patch(verifyToken,cartController.updeteQuantity)
+            .delete(verifyToken,cartController.removeitem)
 
 
 module.exports = router

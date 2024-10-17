@@ -3,7 +3,7 @@ const productController = require('../controller/productController')
 const router = express.Router()
 const {redisCacheMiddleware} = require('../../middleware/redis');
 const verifyToken = require('../../middleware/verifyToken');
-const { verifyRole } = require('../../Auth/controller/authControllers');
+const verifyRole  = require('../../middleware/verifyRole');
 const uploads = require('../../middleware/multer')
 const validateProduct = require('../../middleware/validateProduct')
 router.route('/')
